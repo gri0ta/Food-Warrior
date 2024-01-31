@@ -11,5 +11,17 @@ public class Fruit : MonoBehaviour
         rb.angularVelocity = 100;
     }
 
+    void Update()
+    {
+        if (transform.position.y < -5)
+        {
+            Die();
+        }
+    }
 
+    void Die()
+    {
+        print(":(");
+        Destroy(gameObject);
+    }
 }
