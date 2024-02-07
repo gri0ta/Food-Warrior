@@ -2,6 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class FoodEntry
+{
+    public bool isBomb;
+    public float x;
+    public float delay;
+    public bool isRandomPosition;
+    public Vector2 velocity = new Vector2(0f,10f);
+}
+
+[System.Serializable]
+public class Wave
+{
+    public List<FoodEntry> foods;
+    
+}
 public class Spawner : MonoBehaviour
 {
     public GameObject fruitPrefab;
@@ -9,19 +25,29 @@ public class Spawner : MonoBehaviour
     public GameObject bombPrefab;
     public float spawnSpeed = 1f;
 
-    void Start()
+    public int currentWave;
+    public List<Wave> waves;
+
+    async void Start()
     {
-        
-        InvokeRepeating("Spawn", spawnSpeed, 1f);
+        //InvokeRepeating("Spawn", spawnSpeed, 1f);
+        while (currentWave < waves.Count)
+        {
+            var wave = waves[currentWave]; //dabartinis wave
+            for (int i = 0; i < wave.foods.Count; i++) 
+            {
+                var food = wave.foods[i]; //einam per savo fruits tam wave
+                await new WaitForSeconds(food.delay);
+                var prefab = food.isBomb ? bombPrefab : fruitPrefab;
+                var go = Instantiate(prefab);
+                go.transform.position = food.isRandomPosition ? new Vector3(Random.Range(-7f,7f),-5,0):new Vector3(food.x, -5, 0);
+                go.GetComponent<Rigidbody2D>().velocity = food.velocity;
+            }
+            await new WaitForSeconds(3f);
+            currentWave++;
+        }
+
     }
 
-    void Spawn()
-    {
-        var chance = Random.Range(0, 100);
-        var prefab = chance > bombChance ? fruitPrefab : bombPrefab; //veikia kaip if ir isrenka arba bomb arba fruit
 
-        var obj = Instantiate(prefab);
-        var x = Random.Range(-5f,5f);
-        obj.transform.position = new Vector3(x,-5,0);
-    }
 }
