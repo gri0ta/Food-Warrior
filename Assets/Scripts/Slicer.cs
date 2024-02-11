@@ -5,6 +5,9 @@ using UnityEngine;
 public class Slicer : MonoBehaviour
 {
     Rigidbody2D rb;
+    public int comboCount;
+    public float comboTimeLeft;
+    public AudioClip comboSound;
 
     private void Start()
     {
@@ -18,6 +21,18 @@ public class Slicer : MonoBehaviour
         //transform.position = worldPos;
 
         rb.MovePosition(worldPos);
+
+        //COMBO
+        comboTimeLeft -= Time.deltaTime;
+        if (comboTimeLeft <=0)
+        {
+            if (comboCount>2)
+            {
+                //GameManager.score+=3;
+               AudioSystem.Play(comboSound);
+            }
+            comboCount = 0;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -25,5 +40,7 @@ public class Slicer : MonoBehaviour
         print(":)");
         var food = collision.gameObject.GetComponent<Food>();
         food.Slice();
+        comboCount++;
+        comboTimeLeft = 0.3f;
     }
 }
