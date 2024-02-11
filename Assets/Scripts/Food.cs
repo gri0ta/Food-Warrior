@@ -9,6 +9,7 @@ public class Food : MonoBehaviour
 
     public GameObject leftSide;
     public GameObject rightSide;
+    public Color juiceColor;
 
     void Start()
     {
@@ -36,6 +37,8 @@ public class Food : MonoBehaviour
     {
         var particles = Instantiate(explodeParticles);
         particles.transform.position = transform.position;
+        particles.GetComponent<ParticleSystem>().startColor = juiceColor;
+        particles.GetComponentsInChildren<ParticleSystem>()[1].startColor = juiceColor;
 
         transform.DetachChildren();
         var leftRb = leftSide.AddComponent<Rigidbody2D>();
